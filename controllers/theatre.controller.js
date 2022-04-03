@@ -1,4 +1,5 @@
 const Theatre = require("../models/theatre.model");
+const Movie = require("../models/movie.model");
 
 
 /**
@@ -32,7 +33,13 @@ exports.getAllTheatres = async (req, res) => {
     if (req.query.pinCode != undefined) {
         queryObj.pinCode = req.query.pinCode;
     }
-    const theatres = await Theatre.find(queryObj);
+    var theatres = await Theatre.find(queryObj);
+
+    if (req.query.movieId != undefined) {
+        //filter the list of the theatres
+        theatres = theatres.filter(t => t.movies.includes(req.query.movieId));
+    }
+
     res.status(200).send(theatres);
 }
 
@@ -64,7 +71,7 @@ exports.updateTheatre = async (req, res) => {
     savedTheatre.description = req.body.description != undefined ? req.body.description : savedTheatre.description;
     savedTheatre.city = req.body.city != undefined ? req.body.city : savedTheatre.city;
     savedTheatre.pinCode = req.body.pinCode != undefined ? req.body.pinCode : savedTheatre.pinCode;
-   
+
     var updatedTheatre = await savedTheatre.save();
 
     res.status(200).send(updatedTheatre);
@@ -75,7 +82,7 @@ exports.updateTheatre = async (req, res) => {
 /**
  * Delete a theatres
  */
-exports.deleteTheatre = async (req, res)=>{
+exports.deleteTheatre = async (req, res) => {
 
     await Theatre.deleteOne({
         _id: req.params.id
@@ -86,3 +93,54 @@ exports.deleteTheatre = async (req, res)=>{
 
 
 }
+
+/**
+ * Add a movie inside a theatre
+ */
+exports.addMoviesToATheater = async (req, res) => {
+
+    //validation of tha savedTheatre will be done in the later section as middleware
+    const savedTheatre = await Theatre.findOne({ _id: req.params.id });
+
+    //Validation of these movie ids will be done in the later section
+    movieIds = req.body.movieIds;
+
+    //Add movieIds to the theatres
+    if (req.body.insert) {
+        movieIds.forEach(movieId => {
+            savedTheatre.movies.push(movieId);
+        });
+    } else {
+        //remove these movies from the theatres
+        savedMovieIds = savedTheatre.movies;
+
+        movieIds.forEach(movieId => {
+            savedMovieIds = savedMovieIds.filter(smi => smi != movieId);
+        });
+        savedTheatre.movies = savedMovieIds;
+    }
+
+
+    await savedTheatre.save(); //save in the database
+    res.status(200).send(savedTheatre);
+
+}
+
+/**
+ * Check if the given movie is running in the given theatre
+ */
+exports.checkMovieInsideATheatre = async (req, res) => {
+
+
+    const savedTheatre = await Theatre.findOne({ _id: req.params.theatreId });
+
+    const savedMovie = await Movie.findOne({ _id: req.params.movieId });
+
+
+    const responseBody = {
+        message: savedTheatre.movies.includes(savedMovie._id) ? "Movie is present" : "Movie is not present"
+    }
+    res.status(200).send(responseBody);
+}
+
+
