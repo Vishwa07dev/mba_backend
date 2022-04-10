@@ -16,6 +16,7 @@
         pending:  'PENDING',
         approved: 'APPROVED',
         rejected: 'REJECTED'
-    }
+    },
+    ticketPrice : 150
     
 }
