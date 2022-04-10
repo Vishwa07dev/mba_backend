@@ -1,5 +1,5 @@
 const constants = require("../utils/constants");
-
+const Theatre = require("../models/theatre.model");
 
 validateTheatreRequestBody = async (req, res, next) => {
 
@@ -30,6 +30,16 @@ validateTheatreRequestBody = async (req, res, next) => {
         return res.status(400).send({
             message: "Failed! Theatre location pincode is not provided !"
         });  
+    }
+
+    /**
+     * Validate same theatre at the same location is not created
+     */
+    const theatre = await Theatre.findOne({name: req.body.name , pinCode : req.body.pinCode});
+    if(theatre!=null){
+        return res.status(400).send({
+            message: "Failed! Same theatre in same location already exists !"
+        }); 
     }
 
 
