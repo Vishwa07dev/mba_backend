@@ -17,6 +17,16 @@
         approved: 'APPROVED',
         rejected: 'REJECTED'
     },
+    paymentStatus : {
+        success : 'SUCCESS',
+        failed : 'FAILED'
+    },
+    bookingStatus : {
+        inProgress : 'IN_PROGRESS',
+        completed : 'COMPLETED',
+        cancelled : 'CANCELLED',
+        expired : 'EXPIRED'
+    },
     ticketPrice : 150
     
 }
