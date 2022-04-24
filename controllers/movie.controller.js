@@ -14,6 +14,7 @@ exports.getAllMovies = async (req, res) => {
         queryObj.name = req.query.name;
     }
     const movies = await Movie.find(queryObj);
+    
     res.status(200).send(movies);
 
 }

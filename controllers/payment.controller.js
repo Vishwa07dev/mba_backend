@@ -1,6 +1,8 @@
 const Booking = require("../models/booking.model");
 const Payment = require("../models/payment.model");
 const constants = require("../utils/constants");
+const User = require("../models/user.model");
+const sendEmail = require("../utils/NotificationClient").sendEmail;
 
 
 /**
@@ -11,6 +13,8 @@ const constants = require("../utils/constants");
 exports.getAllPayments = async (req, res) => {
 
     const queryObj = {}
+    const userIdReq = req.userId;
+    const user = await User.findOne({"userId" : userIdReq});
     if (user.userType == constants.userTypes.admin) {
     } else {
         const bookings = await Booking.find({
@@ -83,7 +87,15 @@ exports.createPayment = async (req, res) => {
          */
         booking.status = constants.bookingStatus.completed;
         await booking.save();
+
+        const user = await User.findOne({"userId" : req.userId});
+        sendEmail(payment._id, "Payment successfull for the booking id : " + req.body.bookingId, JSON.stringify(booking), user.email, "mba-no-reply@mba.com")
+        /**
+         * Send the confirmation email
+         */
+
         return res.status(201).send(payment);
+
     } catch (err) {
         console.log(err);
         res.status(500).send({

@@ -34,6 +34,63 @@ mongoose.connect(dbConfig.DB_URL, () => {
  */
 async function init() {
 
+    /**
+     * Creating one ADMIN user at the server boot time
+     */
+     await User.collection.drop();
+     try {
+
+        user = await User.create({
+            name: "Vishwa",
+            userId: "admin", // It should be atleat 16, else will throw error
+            email: "Kankvish@gmail.com",  // If we don't pass this, it will throw the error
+            userType: "ADMIN",
+            password :bcrypt.hashSync("Welcome1", 8) //this field should be hidden from the end user
+
+        });
+        console.log("ADMIN user created");
+
+    } catch (e) {
+        console.log(e.message);
+    }
+
+    let client1, client2, client3 ;
+    try {
+
+        client1 = await User.create({
+            name: "Client1",
+            userId: "client01", // It should be atleat 16, else will throw error
+            email: "Kankvish1@gmail.com",  // If we don't pass this, it will throw the error
+            userType: "CLIENT",
+            password :bcrypt.hashSync("Welcome1", 8) //this field should be hidden from the end user
+
+        });
+        client2 = await User.create({
+            name: "Client2",
+            userId: "client02", // It should be atleat 16, else will throw error
+            email: "Kankvish2@gmail.com",  // If we don't pass this, it will throw the error
+            userType: "CLIENT",
+            password :bcrypt.hashSync("Welcome1", 8) //this field should be hidden from the end user
+
+        });
+        client3 = await User.create({
+            name: "Client3",
+            userId: "client03", // It should be atleat 16, else will throw error
+            email: "Kankvish3@gmail.com",  // If we don't pass this, it will throw the error
+            userType: "CLIENT",
+            password :bcrypt.hashSync("Welcome1", 8) //this field should be hidden from the end user
+
+        });
+        console.log("Clients created");
+
+    } catch (e) {
+        console.log(e.message);
+    }
+
+    /**
+     * Create few theatre owners at the server boot time
+     */
+
     // Creating few initial set of movies
     await Movie.collection.drop();
     try {
@@ -102,7 +159,8 @@ async function init() {
             city: "Bangalore",
             description: "Top class theatre",
             pinCode: 560052,
-            movies : [movie1._id, movie2._id, movie3._id]
+            movies : [movie1._id, movie2._id, movie3._id],
+            ownerId : client1._id
 
         });
         await Theatre.create({
@@ -110,7 +168,8 @@ async function init() {
             city: "Bangalore",
             description: "PVR franchise theatre",
             pinCode: 560095,
-            movies : [movie1._id, movie2._id, movie4._id]
+            movies : [movie1._id, movie2._id, movie4._id],
+            ownerId : client1._id
 
         });
         await Theatre.create({
@@ -118,7 +177,8 @@ async function init() {
             city: "Bangalore",
             description: "IMax franchise theatre",
             pinCode: 560095,
-            movies : [movie1._id, movie4._id]
+            movies : [movie1._id, movie4._id],
+            ownerId : client2._id
 
         });
         await Theatre.create({
@@ -126,7 +186,8 @@ async function init() {
             city: "Bangalore",
             description: "Economical theatre",
             pinCode: 560094,
-            movies : [movie5._id, movie4._id]
+            movies : [movie5._id, movie4._id],
+            ownerId : client2._id
  
         });
 
@@ -135,7 +196,8 @@ async function init() {
             city: "Pune",
             description: "Top class theatre",
             pinCode: 411001,
-            movies : [movie5._id, movie2._id]
+            movies : [movie5._id, movie2._id],
+            ownerId : client3._id
 
         });
         await Theatre.create({
@@ -143,7 +205,8 @@ async function init() {
             city: "Pune",
             description: "Economical theatre",
             pinCode: 411042,
-            movies : [movie3._id, movie2._id]
+            movies : [movie3._id, movie2._id],
+            ownerId : client3._id
 
         });
 
@@ -153,25 +216,7 @@ async function init() {
         console.error(e.message);
     }
 
-    /**
-     * Creating one ADMIN user at the server boot time
-     */
-     await User.collection.drop();
-     try {
-
-        user = await User.create({
-            name: "Vishwa",
-            userId: "admin", // It should be atleat 16, else will throw error
-            email: "Kankvish@gmail.com",  // If we don't pass this, it will throw the error
-            userType: "ADMIN",
-            password :bcrypt.hashSync("Welcome1", 8) //this field should be hidden from the end user
-
-        });
-        console.log("ADMIN user created");
-
-    } catch (e) {
-        console.log(e.message);
-    }
+    
 
 }
 
