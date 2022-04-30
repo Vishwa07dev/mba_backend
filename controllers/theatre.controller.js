@@ -1,6 +1,7 @@
 const Theatre = require("../models/theatre.model");
 const Movie = require("../models/movie.model");
 const sendEmail = require("../utils/NotificationClient").sendEmail;
+const User = require("../models/user.model");
 
 
 /**
@@ -66,10 +67,10 @@ exports.getTheatre = async (req, res) => {
  * Update a theatre
  */
 exports.updateTheatre = async (req, res) => {
-
     const savedTheatre = await Theatre.findOne({ _id: req.params.id });
 
     if (!savedTheatre) {
+        console.log("here 5");
         return res.status(400).send({
             message: "Theatre being updated doesn't exist"
         });
@@ -87,7 +88,7 @@ exports.updateTheatre = async (req, res) => {
      const theatreOwner = await User.findOne({_id : updatedTheatre.ownerId});
      sendEmail(updatedTheatre._id, "Theatre updated with the theatre id : " + updatedTheatre._id, JSON.stringify(updatedTheatre), theatreOwner.email, "mba-no-reply@mba.com");
      
-
+    console.log("sending the response");
     res.status(200).send(updatedTheatre);
 }
 
@@ -151,9 +152,9 @@ exports.addMoviesToATheater = async (req, res) => {
      * Sending email to the owner of the theatre
      */
      const theatreOwner = await User.findOne({_id : savedTheatre.ownerId});
-     sendEmail(savedTheatre._id, "Theatre deleted with the theatre id : " + savedTheatre._id, "Theatre deleted", theatreOwner.email, "mba-no-reply@mba.com");
+     sendEmail(savedTheatre._id, "Movies updated in the theatre with id : " + savedTheatre._id, SON.stringify(savedTheatre), theatreOwner.email, "mba-no-reply@mba.com");
      
-    res.status(200).send(savedTheatre);
+     res.status(200).send(savedTheatre);
 
 }
 

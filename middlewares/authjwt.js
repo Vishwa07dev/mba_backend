@@ -48,11 +48,12 @@ isAdminOrClient = async (req, res, next) => {
     })
     if (user && ( (user.userType == constants.userTypes.admin) || user.userType == constants.userTypes.client) ) {
         
-
         if(user.userType == constants.userTypes.client){
             //check if the client is the owner of the theatre or not
             const savedTheatre = await Theatre.findOne({ _id: req.params.id });
-            if(savedTheatre.ownerId != user._id){
+            
+            // if(savedTheatre.ownerId != user._id){  this is not the correct way to compare and will fail
+            if(String(savedTheatre.ownerId) != String(user._id)){
                 return res.status(403).send({
                     message: "Client requesting to update the theatre is not the owner!"
                 });
@@ -60,7 +61,7 @@ isAdminOrClient = async (req, res, next) => {
                 next();
             }
         }
-        next();
+        
         
     } else {
         return res.status(403).send({

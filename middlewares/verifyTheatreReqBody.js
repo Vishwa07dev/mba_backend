@@ -34,9 +34,10 @@ validateTheatreRequestBody = async (req, res, next) => {
 
     /**
      * Validate same theatre at the same location is not created
+     * This validation should only be done creation and not editing
      */
     const theatre = await Theatre.findOne({name: req.body.name , pinCode : req.body.pinCode});
-    if(theatre!=null){
+    if(theatre!=null && req.method == "POST" ){
         return res.status(400).send({
             message: "Failed! Same theatre in same location already exists !"
         }); 
